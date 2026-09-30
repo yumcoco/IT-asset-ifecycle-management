@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <title>Vendor Management | Workwize Device Management</title>-->
+    <title>Vendor Management | Device Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+<!--            <a class="navbar-brand" href="/">Workwize Device Management</a>-->
+            <a class="navbar-brand" href="/">Device Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/employee-assets">Employee Assets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inventory">Device Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/vendors">Vendor Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/procurement">Procurement</a>
+                    </li>
+                </ul>
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-2 fw-bold">@by Lisa</span>
+                    <img src="{{ url_for('static', filename='images/avater.png') }}" alt="Lisa" class="rounded-circle" width="40" height="40">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>Vendor Management</h1>
+                <p class="lead">Analyze and track vendor performance for optimal procurement decisions</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" id="add-vendor-btn">
+                    <i class="bi bi-plus-lg"></i> Add Vendor
+                </button>
+                <button class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-download"></i> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Vendor Performance Overview -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        Vendor Reliability Scores
+                    </div>
+                    <div class="card-body">
+                        <canvas id="reliabilityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        Vendor Quality Scores
+                    </div>
+                    <div class="card-body">
+                        <canvas id="qualityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        Order Volume Trends
+                    </div>
+                    <div class="card-body">
+                        <canvas id="orderVolumeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendor Table -->
+        <div class="card">
+            <div class="card-header">
+                Vendor List
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Vendor Name</th>
+                                <th>Region</th>
+                                <th>Reliability Score</th>
+                                <th>Quality Score</th>
+                                <th>Total Orders</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendor-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor Details Modal -->
+    <div class="modal fade" id="vendor-details-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vendor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Vendor Name</h6>
+                        <p id="vendor-detail-name">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Region</h6>
+                        <p id="vendor-detail-country">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Reliability Score</h6>
+                        <p id="vendor-detail-reliability">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Quality Score</h6>
+                        <p id="vendor-detail-quality">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Total Orders</h6>
+                        <p id="vendor-detail-orders">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Total Spend</h6>
+                        <p id="vendor-detail-spend">-</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">IT Asset Management system prototype by Lisa &copy; 2025</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/vendors.js') }}"></script>
+</body>
+</html>

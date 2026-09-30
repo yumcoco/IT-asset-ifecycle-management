@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <title>Procurement | Workwize Device Management</title>-->
+    <title>Procurement | Workwize Device Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+<!--            <a class="navbar-brand" href="/">Workwize Device Management</a>-->
+            <a class="navbar-brand" href="/">Device Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/employee-assets">Employee Assets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inventory">Device Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vendors">Vendor Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/procurement">Procurement</a>
+                    </li>
+                </ul>
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-2 fw-bold">@by Lisa</span>
+                    <img src="{{ url_for('static', filename='images/avater.png') }}" alt="Lisa" class="rounded-circle" width="40" height="40">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>Procurement Management</h1>
+                <p class="lead">Manage and track device orders from requisition to delivery</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" id="create-order-btn">
+                    <i class="bi bi-plus-lg"></i> New Purchase Order
+                </button>
+            </div>
+        </div>
+
+        <!-- Order Status Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Open Orders</h5>
+                        <h2 id="open-orders">12</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Approval</h5>
+                        <h2 id="pending-approval">3</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">In Transit</h5>
+                        <h2 id="in-transit">5</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed</h5>
+                        <h2 id="completed-orders">45</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs for Different Order Categories -->
+        <ul class="nav nav-tabs mb-4" id="orderTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-orders-tab" data-bs-toggle="tab" data-tab-type="all" type="button" role="tab">
+            All Orders
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-tab-type="pending" type="button" role="tab">
+            Pending
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="in-transit-tab" data-bs-toggle="tab" data-tab-type="in-transit" type="button" role="tab">
+            In Transit
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-tab-type="completed" type="button" role="tab">
+            Completed
+        </button>
+    </li>
+</ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="orderTabsContent">
+            <div class="tab-pane fade show active" id="all-orders-tab-pane" role="tabpanel" tabindex="0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Vendor</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PO-2025-001</td>
+                                        <td>Dell Technologies</td>
+                                        <td>Mar 15, 2025</td>
+                                        <td>5</td>
+                                        <td>$4,250</td>
+                                        <td><span class="badge bg-warning">Pending Approval</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PO-2025-002</td>
+                                        <td>Apple Inc.</td>
+                                        <td>Mar 12, 2025</td>
+                                        <td>10</td>
+                                        <td>$12,500</td>
+                                        <td><span class="badge bg-info">In Transit</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PO-2025-003</td>
+                                        <td>Lenovo</td>
+                                        <td>Mar 10, 2025</td>
+                                        <td>8</td>
+                                        <td>$6,800</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PO-2025-004</td>
+                                        <td>Samsung</td>
+                                        <td>Mar 5, 2025</td>
+                                        <td>15</td>
+                                        <td>$7,500</td>
+                                        <td><span class="badge bg-danger">Canceled</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pending-tab-pane" role="tabpanel" tabindex="0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Vendor</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PO-2025-001</td>
+                                        <td>Dell Technologies</td>
+                                        <td>Mar 15, 2025</td>
+                                        <td>5</td>
+                                        <td>$4,250</td>
+                                        <td><span class="badge bg-warning">Pending Approval</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other tab panes would be similar -->
+            <div class="tab-pane fade" id="in-transit-tab-pane" role="tabpanel" tabindex="0">
+                <!-- Similar structure to All Orders tab -->
+                <div class="alert alert-info">
+                    Tab content for In Transit orders would appear here
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="completed-tab-pane" role="tabpanel" tabindex="0">
+                <!-- Similar structure to All Orders tab -->
+                <div class="alert alert-info">
+                    Tab content for Completed orders would appear here
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">IT Asset Management system prototype by Lisa &copy; 2025</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/procurement.js') }}"></script>
+</body>
+</html>
